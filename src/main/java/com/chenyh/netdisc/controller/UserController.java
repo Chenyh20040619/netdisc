@@ -11,29 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-@Controller
+@CrossOrigin
+@RestController
 public class UserController {
     @Autowired
     UserService userService;
 
     @PostMapping("/toLogin")
-    @ResponseBody //返回对象为字符串
-    public String login(String id, String password){
+    public User login(@RequestBody User passUser){
+        String id = passUser.getId();
+        String password = passUser.getPassword();
+        System.out.println(id+" "+password);
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(id, password);
         try {
             subject.login(token);
             User user = (User) subject.getPrincipal();
-            return "success";
+            return user;
         }catch (UnknownAccountException e){
             System.out.println("账号不对");
-            return "账号不对";
+            return null;
         }catch (IncorrectCredentialsException e){
-            System.out.println("密码不对");
-            return "密码不对";
+            return null;
         }
     }
 
