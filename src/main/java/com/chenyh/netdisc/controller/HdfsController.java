@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/netdisc")
 public class HdfsController {
     @Autowired
     private HdfsApiService apiService;
@@ -21,20 +22,20 @@ public class HdfsController {
     /**
      * 上传文件
      * @param file
-     * @param destPath
+     * @param path
      * @return
      * @throws IOException
      * @throws URISyntaxException
      * @throws InterruptedException
      */
-    @PostMapping("/upLoad")
-    public String upLoadFile(@RequestParam("file") MultipartFile file, @RequestParam("destPath") String destPath) throws IOException, URISyntaxException, InterruptedException {
+    @PostMapping("/upload")
+    public boolean upLoadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException, URISyntaxException, InterruptedException {
         HdfsApi api = new HdfsApi();
         InputStream inputStream = file.getInputStream();
         String filename = file.getOriginalFilename();
-        api.upLoadFile(inputStream, destPath+"/"+filename);
-        api.close();
-        return "OK!";
+        System.out.println(filename);
+        api.upLoadFile(inputStream, "/"+path+"/"+filename);
+        return true;
     }
 
     /**
@@ -47,10 +48,10 @@ public class HdfsController {
      * @throws InterruptedException
      */
     @GetMapping("/download")
-    public String download(@RequestParam("srcPath") String srcPath, HttpServletResponse response) throws IOException, URISyntaxException, InterruptedException {
+    public boolean download(@RequestParam("path") String srcPath, HttpServletResponse response) throws IOException, URISyntaxException, InterruptedException {
         HdfsApi api = new HdfsApi();
-        api.downLoadFile(srcPath, response);
-        api.close();
-        return "OK!";
+        System.out.println(srcPath);
+        api.downLoadFile("/" + srcPath, response);
+        return true;
     }
 }

@@ -37,6 +37,16 @@ public class UserController {
         }
     }
 
+    @PostMapping("/register")
+    public String register(@RequestBody User registerInfo){
+        int res = userService.addUser(registerInfo);
+        if (res == 0){
+            return null;
+        }else {
+            return "Ok";
+        }
+    }
+
     @DeleteMapping("/deleteUser")
     public int deleteUser(@RequestParam("id") String id){
         int state = userService.deleteUser(id);

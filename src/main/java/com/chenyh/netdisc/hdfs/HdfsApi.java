@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -20,7 +21,8 @@ public class HdfsApi {
     static {
         Configuration conf = new Configuration();
         try {
-            URI uri = new URI("hdfs://8.130.21.241:8020");
+            conf.set("dfs.client.use.datanode.hostname", "true");
+            URI uri = new URI("hdfs://8.130.21.241:9000");
             String user = "root";
             fs = FileSystem.get(uri, conf, user);
         } catch (URISyntaxException e) {
@@ -97,14 +99,18 @@ public class HdfsApi {
      */
     public void upLoadFile(InputStream in, String destPath) throws IOException {
         Path path = new Path(destPath);
-        OutputStream os = fs.create(path);
-        /**
-         * in ：输入字节流（从要上传的文件中读取）
-         * out：输出字节流（字节输出到目标文件）
-         * 2048：每次写入2048
-         * true：不管成功与否，最后都关闭stream资源
-         */
-        org.apache.hadoop.io.IOUtils.copyBytes(in, os, 2048, true);
+        System.out.println(path);
+        FSDataOutputStream os = fs.create(path);
+        System.out.println("传输字节");
+        byte[] bytes = new byte[1024];
+        int len;
+        while ((len = in.read(bytes)) > 0){
+            System.out.println(Arrays.toString(bytes));
+            System.out.println(len);
+            os.write(bytes, 0 ,len);
+        }
+        os.flush(); //文件小于8k
+        os.close();
     }
 
     /**
@@ -123,29 +129,23 @@ public class HdfsApi {
      * @param response
      * @throws UnsupportedEncodingException
      */
-    public void downLoadFile(String srcFile, HttpServletResponse response) throws UnsupportedEncodingException {
+    public boolean downLoadFile(String srcFile, HttpServletResponse response) throws IOException {
         Path sPath = new Path(srcFile);
-        String fileName = srcFile.substring(srcFile.lastIndexOf("/") + 1);
-        System.err.println(fileName);
-        response.setContentType(new MimetypesFileTypeMap().getContentType(new File(fileName)));
-        response.setHeader("Content-Disposition",
-                "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
-
-        try {
-            InputStream is = fs.open(sPath);
-            byte[] data = new byte[1024];
-            OutputStream out = response.getOutputStream();
-
-            while(is.read(data)!=-1){
-                out.write(data);
-            }
-            out.flush();
-            is.close();
-            out.close();
-
-        } catch (IOException e) {
-            System.err.println(e);
+//        String fileName = srcFile.substring(srcFile.lastIndexOf("/") + 1);
+//        response.setContentType(new MimetypesFileTypeMap().getContentType(new File(fileName)));
+//        response.setHeader("Content-Disposition",
+//                "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
+        FSDataInputStream is = fs.open(sPath);
+        byte[] data = new byte[1024];
+        OutputStream out = response.getOutputStream();
+        while(is.read(data) != -1){
+            out.write(data);
+            System.out.println(data+"here");
         }
+        out.flush();
+        is.close();
+        out.close();
+        return true;
     }
 
     /**
@@ -335,10 +335,10 @@ public class HdfsApi {
         fs.close();
     }
     public static void main(String[] args) throws Exception {
-        Configuration conf = new Configuration();
-        URI uri = new URI("hdfs://8.130.21.241:8020");
-        String user = "root";
         HdfsApi hdfsApi = new HdfsApi();
-        hdfsApi.mkdir("/aaa");
+        hdfsApi.upLoadFile("E:\\test.txt", "/scda");
+
+//        hdfsApi.createFile("/vs");
+//        hdfsApi.mkdir("/test");
     }
 }
