@@ -3,6 +3,7 @@ package com.chenyh.netdisc.hdfs;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 public interface HdfsApiService {
     /**
@@ -77,4 +78,13 @@ public interface HdfsApiService {
      * @throws Exception
      */
     boolean upLoad(HdfsApi api, HdfsOp hdfsOp) throws Exception;
+
+    /**
+     * 显示目录结构
+     * @param api
+     * @param hdfsOp
+     * @return
+     * @throws Exception
+     */
+    ArrayList<String> showDir(HdfsApi api, HdfsOp hdfsOp) throws Exception;
 }

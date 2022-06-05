@@ -38,18 +38,37 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody User registerInfo){
+    public boolean register(@RequestBody User registerInfo){
         int res = userService.addUser(registerInfo);
         if (res == 0){
-            return null;
+            return false;
         }else {
-            return "Ok";
+            return true;
         }
     }
+    /*
+    不推荐使用@RequestParam接收application/json
+    后端@RequestBody注解对应的类在将HTTP的输入流(含请求体)装配到目标类(即：@RequestBody后面的类)时，会根据json字符串中的key来匹配对应实体类的属性
+     */
+    @PostMapping("/deleteUser")
+    public int deleteUser(@RequestBody User user){
+        int state = userService.deleteUser(user.getId());
+        return state;
+    }
 
-    @DeleteMapping("/deleteUser")
-    public int deleteUser(@RequestParam("id") String id){
-        int state = userService.deleteUser(id);
+    @PostMapping("/resetPassword")
+    public int resetPassword(@RequestBody User user){
+        int state = userService.resetPassword(user.getId(), user.getPassword());
+        return state;
+    }
+
+    @PostMapping("/updateUser")
+    public int updateUser(@RequestBody User user){
+        System.out.println(user);
+        String id = user.getId();
+        String username = user.getUsername();
+        String email = user.getEmail();
+        int state = userService.updateMsg(id, username, email);
         return state;
     }
 }

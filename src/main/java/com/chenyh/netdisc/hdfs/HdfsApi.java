@@ -110,7 +110,7 @@ public class HdfsApi {
             os.write(bytes, 0 ,len);
         }
         os.flush(); //文件小于8k
-        os.close();
+        os.close(); //需要关闭资源！！！
     }
 
     /**
@@ -138,9 +138,11 @@ public class HdfsApi {
         FSDataInputStream is = fs.open(sPath);
         byte[] data = new byte[1024];
         OutputStream out = response.getOutputStream();
-        while(is.read(data) != -1){
-            out.write(data);
-            System.out.println(data+"here");
+        int len;
+        while((len = is.read(data)) != -1){
+            String str = new String(data, 0, len);
+            out.write(data, 0, len);
+            System.out.println(str);
         }
         out.flush();
         is.close();
@@ -326,6 +328,16 @@ public class HdfsApi {
         return bytes.toString();
     }
 
+    public ArrayList<String> showDir(String srcPath) throws IOException {
+        RemoteIterator<LocatedFileStatus> files = fs.listLocatedStatus(new Path(srcPath));
+        ArrayList<String> filenames = new ArrayList<>();
+        while (files.hasNext()){
+            LocatedFileStatus fileStatus = files.next();
+            System.out.println(fileStatus.getPath().getName());
+            filenames.add(fileStatus.getPath().getName());
+        }
+        return filenames;
+    }
     /**
      * 释放fs
      *

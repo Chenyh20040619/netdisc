@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Scanner;
+
 @SpringBootTest
 class NetdiscApplicationTests {
 
@@ -26,6 +28,10 @@ class NetdiscApplicationTests {
         Object user = new User("123", "123", "123", "123");
         String id = (String) GetObjectProperties.getValueByKey(user, "id");
         System.out.println(id);
+    }
+    @Test
+    public void test(){
+
     }
 
 }

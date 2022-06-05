@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 @Service
 public class HdfsApiServiceImpl implements HdfsApiService {
@@ -181,6 +182,13 @@ public class HdfsApiServiceImpl implements HdfsApiService {
         }
         api.downLoadFile(srcPath, destPath);
         return true;
+    }
+
+    @Override
+    public ArrayList<String> showDir(HdfsApi api, HdfsOp hdfsOp) throws Exception {
+        String srcPath = hdfsOp.getSrcPath();
+        ArrayList<String> dirList = api.showDir(srcPath);
+        return dirList;
     }
 
     @Override

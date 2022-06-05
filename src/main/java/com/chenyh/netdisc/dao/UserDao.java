@@ -13,6 +13,8 @@ public interface UserDao {
 
     int updateUser(User user);
 
+    int updateMsg(String id, String username, String email);
+
     @Select("select * from user where id = #{id}")
     User getUserById(@Param("id") String id);
 

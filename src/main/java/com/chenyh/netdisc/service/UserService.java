@@ -33,6 +33,12 @@ public class UserService {
         return i;
     }
 
+    public int updateMsg(String id, String username, String email){
+        int i = userDao.updateMsg(id, username, email);
+        return i;
+    }
+
+
     public int resetPassword(String id, String password){
         int i = userDao.resetPassword(id, password);
         return i;
