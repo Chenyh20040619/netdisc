@@ -142,7 +142,6 @@ public class HdfsApi {
         while((len = is.read(data)) != -1){
             String str = new String(data, 0, len);
             out.write(data, 0, len);
-            System.out.println(str);
         }
         out.flush();
         is.close();

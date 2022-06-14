@@ -34,7 +34,6 @@ public class HdfsController {
      */
     @PostMapping("/upload")
     public String upLoadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) throws IOException, URISyntaxException, InterruptedException {
-        HdfsApi api = new HdfsApi();
         InputStream inputStream = file.getInputStream();
         String filename = file.getOriginalFilename();
         System.out.println(filename);
@@ -54,7 +53,6 @@ public class HdfsController {
     //如果使用HttpServletResponse response参数 那么接口返回了out的数据
     @GetMapping("/download")
     public boolean download(@RequestParam("path") String srcPath, HttpServletResponse response) throws IOException, URISyntaxException, InterruptedException {
-        HdfsApi api = new HdfsApi();
         System.out.println(srcPath);
         api.downLoadFile(srcPath, response);
         System.out.println(true);
